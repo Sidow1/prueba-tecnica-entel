@@ -1,4 +1,8 @@
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
+import { RootState } from "../store/store";
+import { getSellers } from "../store/seller/sellerSlice";
+import { useEffect } from "react";
 const ListContainer = styled.div`
   margin-top: 40px;
   margin-bottom: 105px;
@@ -41,6 +45,13 @@ const Table = styled.table`
 `;
 
 export const ListForm = () => {
+  const dispatch = useDispatch();
+  const sellersInfo = useSelector((state: RootState) => state.seller);
+
+  useEffect(() => {
+    // Dispatch the action to get sellers when the component mounts
+    dispatch(getSellers());
+  }, [dispatch]);
   return (
     <ListContainer>
       <b>Lista formulario</b>
@@ -60,6 +71,21 @@ export const ListForm = () => {
             <th>Eliminar</th>
           </tr>
         </thead>
+        <tbody>
+          {sellersInfo.map((seller, index) => (
+            <tr key={index}>
+              <td>{seller.name}</td>
+              <td>{seller.rut}</td>
+              <td>{seller.vehicle.id}</td>
+              <td>{seller.vehicle.brand}</td>
+              <td>{seller.vehicle.model}</td>
+              <td>{seller.vehicle.price}</td>
+              <td>
+                <button>Eliminar</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </Table>
 
       <footer>Mostrando registros 1 al 10 de un total de 10 registros.</footer>

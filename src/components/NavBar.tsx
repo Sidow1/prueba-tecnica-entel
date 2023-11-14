@@ -22,6 +22,7 @@ const LogoImg = styled.img`
   width: 53px;
   height: 40px;
   object-fit: contain;
+  margin-left: 80px;
 `;
 
 const ButtonWrapper = styled.div`

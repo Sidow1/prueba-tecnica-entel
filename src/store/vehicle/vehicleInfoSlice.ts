@@ -17,14 +17,10 @@ const initialState: BrandModelState = {
   },
 };
 
-export const vehiculeInfoSlice = createSlice({
+export const vehicleInfoSlice = createSlice({
   name: "vehiculeInfo",
   initialState,
-  reducers: {
-    // getBrandModels: (state, action: PayloadAction<{ brand: Brand }>) => {
-    // },
-  },
+  reducers: {},
 });
 
-// Action creators are generated for each case reducer function
-export const {} = vehiculeInfoSlice.actions;
+export const {} = vehicleInfoSlice.actions;

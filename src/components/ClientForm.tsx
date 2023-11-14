@@ -1,9 +1,13 @@
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import styled from "styled-components";
+import Swal from "sweetalert2";
+
 import { Brand, Seller } from "../interfaces";
 import { RootState } from "../store/store";
-import { addSeller } from "../store/seller/sellerSlice";
+import { addSeller, getSellers } from "../store/seller/sellerSlice";
+import { validateRutFormat, validateVehicleIdUnique } from "../helpers";
 
 const FormContainer = styled.div`
   margin-left: auto;
@@ -65,7 +69,7 @@ const Input = styled.input`
   margin-top: 8px;
   margin-bottom: 8px;
   outline: none;
-  transition: border-color 0.3s; /* Agrega una transición suave al cambio de color del borde */
+  transition: border-color 0.3s;
 
   &:hover,
   &:focus {
@@ -117,9 +121,10 @@ const Select = styled.select`
 export const ClientForm = () => {
   const dispatch = useDispatch();
   const brandModels = useSelector(
-    (state: RootState) => state.vehiculesInfo.brandModels
+    (state: RootState) => state.vehiclesInfo.brandModels
   );
-  const brands = useSelector((state: RootState) => state.vehiculesInfo.brands);
+  const brands = useSelector((state: RootState) => state.vehiclesInfo.brands);
+  const vehiclesInfo = useSelector((state: RootState) => state.seller);
 
   const [selectedBrand, setSelectedBrand] = useState<Brand>(brands[0]);
   const selectedBrandModels = brandModels[selectedBrand] || [];
@@ -136,19 +141,18 @@ export const ClientForm = () => {
     vehiclePrice: "",
   });
 
-  // const handleBrandChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedBrand(event.target.value as Brand);
-  // };
-
-  // const handleBrandModelChange = (
-  //   event: React.ChangeEvent<HTMLSelectElement>
-  // ) => {
-  //   const selectedModel = event.target.value;
-  //   setSelectedModel(selectedModel);
-  // };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const isValidRut = validateRutFormat(formData.rut);
+
+    dispatch(getSellers());
+    const isVehicleIdUnique = validateVehicleIdUnique(
+      formData.vehicleId,
+      vehiclesInfo
+    );
+
+    if (!isValidRut || !isVehicleIdUnique) return;
 
     const newSeller = {
       name: formData.name,
@@ -161,9 +165,23 @@ export const ClientForm = () => {
       },
     };
 
-    console.log(newSeller);
-
     dispatch(addSeller(newSeller as unknown as Seller));
+
+    Swal.fire({
+      title: "Formulario enviado",
+      text: "Vendedor y vehiculo registrados correctamente en base de datos.",
+      icon: "success",
+      confirmButtonText: "Ok",
+    });
+
+    setFormData({
+      name: "",
+      rut: "",
+      vehicleId: "",
+      vehicleBrand: selectedBrand,
+      vehicleModel: selectedModel,
+      vehiclePrice: "",
+    });
   };
 
   const handleSelectChange = (
@@ -201,16 +219,16 @@ export const ClientForm = () => {
           <Input
             id="sellerName"
             placeholder="Nombre completo"
-            required
             value={formData.name}
             onChange={(e) => onInputChange(e, "name")}
+            required
           />
           <Input
             id="sellerRut"
-            placeholder="Rut vendedor"
-            required
+            placeholder="Rut vendedor (12.345.678-9)"
             value={formData.rut}
             onChange={(e) => onInputChange(e, "rut")}
+            required
           />
         </SellerInputsContainer>
         <hr />
@@ -219,30 +237,34 @@ export const ClientForm = () => {
           <Input
             id="vehicleId"
             placeholder="Patente del vehiculo"
-            required
             value={formData.vehicleId}
             onChange={(e) => onInputChange(e, "vehicleId")}
+            required
           />
-          {/* <Input id="vehicleBrand" placeholder="Marca del vehiculo" required /> */}
           <Select
             id="vehicleBrand"
             onChange={(e) => handleSelectChange(e, "vehicleBrand")}
             value={selectedBrand}
             required
           >
+            <option value="" disabled>
+              Seleccione una marca
+            </option>
             {brands.map((brand) => (
               <option key={brand} value={brand}>
                 {brand}
               </option>
             ))}
           </Select>
-          {/* <Input id="vehicleModel" placeholder="Modelo del vehiculo" required /> */}
           <Select
-            id="vehiculeModel"
+            id="vehicleModel"
             value={selectedModel}
             onChange={(e) => handleSelectChange(e, "vehicleModel")}
             required
           >
+            <option value="" disabled>
+              Seleccione un modelo de {selectedBrand}
+            </option>
             {selectedBrandModels.map((brandModel) => (
               <option key={brandModel} value={brandModel}>
                 {brandModel}
@@ -252,9 +274,10 @@ export const ClientForm = () => {
           <Input
             id="vehiclePrice"
             placeholder="Precio del vehiculo"
-            required
+            type="number"
             value={formData.vehiclePrice}
             onChange={(e) => onInputChange(e, "vehiclePrice")}
+            required
           />
         </VehicleInputsContainer>
         <hr />

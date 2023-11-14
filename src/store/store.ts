@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { sellerSlice } from "./seller/sellerSlice";
-import { vehiculeInfoSlice } from "./seller/vehiculeInfoSlice";
+import { vehicleInfoSlice } from "./vehicle/vehicleInfoSlice";
 
 export const store = configureStore({
   reducer: {
     seller: sellerSlice.reducer,
-    vehiculesInfo: vehiculeInfoSlice.reducer,
+    vehiclesInfo: vehicleInfoSlice.reducer,
   },
 });
 

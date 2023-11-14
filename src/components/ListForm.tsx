@@ -1,12 +1,16 @@
-import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
-import { RootState } from "../store/store";
-import { getSellers } from "../store/seller/sellerSlice";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import styled from "styled-components";
+import Swal from "sweetalert2";
+
+import { RootState } from "../store/store";
+import { getSellers, deleteSeller } from "../store/seller/sellerSlice";
+
 const ListContainer = styled.div`
   margin-top: 40px;
   margin-bottom: 105px;
-  width: 825px;
+  width: 1000px;
   margin-left: auto;
   margin-right: auto;
 
@@ -42,6 +46,29 @@ const Table = styled.table`
   tr {
     border-bottom: 1px solid #ccc;
   }
+
+  th,
+  td {
+    text-align: center;
+    padding: 16px;
+  }
+
+  th:first-child,
+  td:first-child {
+    width: 240px;
+  }
+
+  // access to the second child
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 100px;
+  }
+`;
+
+const DeleteButton = styled.button`
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 `;
 
 export const ListForm = () => {
@@ -49,9 +76,35 @@ export const ListForm = () => {
   const sellersInfo = useSelector((state: RootState) => state.seller);
 
   useEffect(() => {
-    // Dispatch the action to get sellers when the component mounts
     dispatch(getSellers());
   }, [dispatch]);
+
+  const deleteSellerFromStore = (vehicleId: string) => {
+    Swal.fire({
+      title: "¿Está seguro de eliminarlo?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminarlo",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire(
+          "Eliminado!",
+          "El vendedor ha sido eliminado de la base de datos.",
+          "success"
+        );
+        dispatch(deleteSeller(vehicleId));
+      }
+    });
+  };
+
+  // Tomamos los 10 vendedores de la lista y los invertimos para mostrar los últimos ingresados
+  const lastTenSellers = sellersInfo.slice(-10).reverse();
+
+  // Si simplemente se quieren mostrar 10 registros pero no en orden de más reciente a más antiguo, tomariamos lo siguiente
+  // const lastTenSellers = sellersInfo.slice(-10);
   return (
     <ListContainer>
       <b>Lista formulario</b>
@@ -67,28 +120,35 @@ export const ListForm = () => {
             <th>Patente vehiculo</th>
             <th>Marca vehiculo</th>
             <th>Modelo vehiculo</th>
-            <th>Color vehiculo</th>
+            <th>Precio vehiculo</th>
             <th>Eliminar</th>
           </tr>
         </thead>
         <tbody>
-          {sellersInfo.map((seller, index) => (
-            <tr key={index}>
+          {lastTenSellers.map((seller) => (
+            <tr key={seller.vehicle.id}>
               <td>{seller.name}</td>
               <td>{seller.rut}</td>
               <td>{seller.vehicle.id}</td>
               <td>{seller.vehicle.brand}</td>
               <td>{seller.vehicle.model}</td>
-              <td>{seller.vehicle.price}</td>
+              <td>${seller.vehicle.price}</td>
               <td>
-                <button>Eliminar</button>
+                <DeleteButton
+                  onClick={() => deleteSellerFromStore(seller.vehicle.id)}
+                >
+                  <img src="/deleteIcon.svg" alt="deleteIcon" />
+                </DeleteButton>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
 
-      <footer>Mostrando registros 1 al 10 de un total de 10 registros.</footer>
+      <footer>
+        Mostrando registros {lastTenSellers.length >= 1 ? 1 : 0} al{" "}
+        {lastTenSellers.length} de un total de {sellersInfo.length} registros.
+      </footer>
     </ListContainer>
   );
 };

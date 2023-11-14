@@ -39,29 +39,6 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-// const Button = styled.button`
-//   width: 158px;
-//   height: 40px;
-//   top: 25px;
-//   left: 1202px;
-//   border-radius: 24px;
-//   padding: 8px 16px;
-//   gap: 8px;
-//   color: #002eff;
-//   border: none;
-//   cursor: pointer;
-//   font-family: "Barlow";
-//   font-style: normal;
-//   font-weight: 500;
-//   font-size: 18px;
-//   background-color: transparent;
-
-//   &:hover,
-//   &.active {
-//     background-color: #e6f0ff;
-//   }
-// `;
-
 const NavLinkButton = styled(NavLink)`
   text-decoration: none;
   color: #002eff;

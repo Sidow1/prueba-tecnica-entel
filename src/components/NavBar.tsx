@@ -14,7 +14,6 @@ const NavBarContentContainer = styled.section`
   background-color: #ffffff;
   box-shadow: 0px 4px 10px #00000026;
   align-items: center;
-  padding: 0 20px;
   display: flex;
   justify-content: space-between;
 `;
@@ -32,6 +31,11 @@ const ButtonWrapper = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 80px;
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-top: 10px;
+  }
 `;
 
 // const Button = styled.button`
@@ -60,7 +64,6 @@ const ButtonWrapper = styled.div`
 const NavLinkButton = styled(NavLink)`
   text-decoration: none;
   color: #002eff;
-  font-family: "Barlow";
   font-style: normal;
   font-weight: 500;
   font-size: 18px;

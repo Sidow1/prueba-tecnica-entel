@@ -4,20 +4,23 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  margin: -20px 165px 0px 250px;
+  margin: -20px 350px;
   gap: 100px;
+
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 `;
 
 const Title = styled.p`
-  font-family: "Barlow";
+  font-family: "Barlow-Regular", Helvetica;
   font-style: normal;
   color: #002eff;
-  font-size: 56px;
+  font-size: 52px;
   font-weight: 600;
   line-height: 67.2px;
   width: 524px;
-  top: 234px;
+  top: 250px;
   left: 165px;
 
   &::before {
@@ -28,6 +31,17 @@ const Title = styled.p`
   span {
     font-weight: bold;
   }
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+    line-height: 28.8px;
+    width: 134px;
+    height: 55px;
+    top: 127px;
+    left: 35px;
+    margin-left: 35px;
+    margin-bottom: 50px;
+  }
 `;
 
 const ImageContainer = styled.img`
@@ -36,6 +50,14 @@ const ImageContainer = styled.img`
   top: 90px;
   left: 851px;
   padding: 16px;
+
+  @media (max-width: 768px) {
+    width: 168px;
+    height: 168px;
+    top: 92px;
+    left: 195px;
+    padding: 12px;
+  }
 `;
 
 export const LaptopSection = () => {
